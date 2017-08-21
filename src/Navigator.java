@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.PriorityQueue;
 
 public class Navigator {
@@ -47,11 +48,13 @@ public class Navigator {
         
         // read query file
         br = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
-        PriorityQueue<Junction> queue = new PriorityQueue<Junction>();
         while((nextLine = br.readLine()) != null) {
             String[] info = extracQue(nextLine); // info:{num1, street1, num2, street2}
             float[] startPosition = getPosition(info[0], info[1]);
             float[] goalPosition = getPosition(info[2], info[3]);
+            
+            PriorityQueue<Junction> queue = new PriorityQueue<Junction>(); // priority queue
+            HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
             
             // put start and end junctions of the street which initial point lies on
             // into priority queue, and set their cost
@@ -71,19 +74,46 @@ public class Navigator {
             getEndJunc(info[3]).neighbors.put(goal, goalPosition[1]);
             
             // A* algorithm for path search
+            found.add(init1);
+            found.add(init2);
             while (!queue.isEmpty() && !queue.contains(goal)) {
                 Junction temp = queue.poll();
-                //for (Junction j)
+                for (Junction j: temp.neighbors.keySet()) {
+                    float newCost = temp.cost + temp.neighbors.get(j);
+                    if (!found.contains(j)) {
+                        j.predecessor = temp;
+                        j.cost = newCost;
+                        found.add(j);
+                    } else if (j.cost > newCost) {
+                        j.predecessor = temp;
+                        j.cost = newCost;
+                    }
+                }
+            }
+            
+            //write result to output file
+            if (queue.isEmpty()) {
+                // in this case, no solution
+            } else {
+                // write answer
             }
         }
         br.close();
     }
 
+    /**
+     * @param the name of a street
+     * @return the corresponding end junction of this street
+     */
     private static Junction getEndJunc(String string) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * @param the name of a street
+     * @return the corresponding start junction of this street
+     */
     private static Junction getStartJunc(String string) {
         // TODO Auto-generated method stub
         return null;
