@@ -85,8 +85,11 @@ public class Navigator {
                         found.add(j);
                         queue.add(j);
                     } else if (j.cost > newCost) {
+                        //in case of order change in pq
+                        queue.remove(j);
                         j.predecessor = temp;
                         j.cost = newCost;
+                        queue.add(j);
                     }
                 }
             }
