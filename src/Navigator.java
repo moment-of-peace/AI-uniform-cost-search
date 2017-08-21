@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -84,6 +83,7 @@ public class Navigator {
                         j.predecessor = temp;
                         j.cost = newCost;
                         found.add(j);
+                        queue.add(j);
                     } else if (j.cost > newCost) {
                         j.predecessor = temp;
                         j.cost = newCost;
