@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Junction {
@@ -12,5 +11,5 @@ public class Junction {
         this.neighbors = new HashMap<Junction, Float>();
         this.cost = Float.POSITIVE_INFINITY;
     }
-
+    
 }

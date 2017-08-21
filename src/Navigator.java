@@ -4,10 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
+        // have not implemented comparator
+        
         // TODO Auto-generated method stub
         String envFile = args[0];
         String queFile = args[1];
@@ -44,10 +47,56 @@ public class Navigator {
         
         // read query file
         br = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
+        PriorityQueue<Junction> queue = new PriorityQueue<Junction>();
         while((nextLine = br.readLine()) != null) {
-            String[] info = extracQue(nextLine);
+            String[] info = extracQue(nextLine); // info:{num1, street1, num2, street2}
+            float[] startPosition = getPosition(info[0], info[1]);
+            float[] goalPosition = getPosition(info[2], info[3]);
             
+            // put start and end junctions of the street which initial point lies on
+            // into priority queue, and set their cost
+            Junction init1 = getStartJunc(info[1]);
+            Junction init2 = getEndJunc(info[1]);
+            
+            init1.cost = startPosition[0];
+            init2.cost = startPosition[1];
+            
+            queue.add(init1);
+            queue.add(init2);
+            
+            // set the connection relationship between goal point and the junctions of
+            // the street it lies on
+            Junction goal = new Junction("goal");
+            getStartJunc(info[3]).neighbors.put(goal, goalPosition[0]);
+            getEndJunc(info[3]).neighbors.put(goal, goalPosition[1]);
+            
+            // A* algorithm for path search
+            while (!queue.isEmpty() && !queue.contains(goal)) {
+                Junction temp = queue.poll();
+                //for (Junction j)
+            }
         }
+        br.close();
+    }
+
+    private static Junction getEndJunc(String string) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static Junction getStartJunc(String string) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * calculate position of a point based on street name and number
+     * @return {x, y}, x and y are the distance from the point to the start and end junction
+     * of the street it lies on
+     */
+    private static float[] getPosition(String string, String string2) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
