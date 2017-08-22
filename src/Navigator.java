@@ -18,8 +18,10 @@ public class Navigator {
         
         // store all found junctions and its name
         HashMap<String, Junction> juncMap = new HashMap<String, Junction>(); 
-        //map junction points to road
+        // map junction points to road
         HashMap<String, String> roadSet = new HashMap<String, String>(); 
+        // a map used to store road details
+        HashMap<String, Object[]> roadMap = new HashMap<String, Object[]>();
         
         // read environment file
         String nextLine;
@@ -49,16 +51,16 @@ public class Navigator {
         br = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
         while((nextLine = br.readLine()) != null) {
             String[] info = extracQue(nextLine); // info:{num1, street1, num2, street2}
-            float[] startPosition = getPosition(info[0], info[1]);
-            float[] goalPosition = getPosition(info[2], info[3]);
+            float[] startPosition = getPosition(info[0], info[1], roadMap);
+            float[] goalPosition = getPosition(info[2], info[3], roadMap);
             
             PriorityQueue<Junction> queue = new PriorityQueue<Junction>(); // priority queue
             HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
             
             // put start and end junctions of the street which initial point lies on
             // into priority queue, and set their cost
-            Junction init1 = getStartJunc(info[1]);
-            Junction init2 = getEndJunc(info[1]);
+            Junction init1 = getStartJunc(info[1], roadMap);
+            Junction init2 = getEndJunc(info[1], roadMap);
             
             init1.cost = startPosition[0];
             init2.cost = startPosition[1];
@@ -69,8 +71,8 @@ public class Navigator {
             // set the connection relationship between goal point and the junctions of
             // the street it lies on
             Junction goal = new Junction("goal");
-            getStartJunc(info[3]).neighbors.put(goal, goalPosition[0]);
-            getEndJunc(info[3]).neighbors.put(goal, goalPosition[1]);
+            getStartJunc(info[3], roadMap).neighbors.put(goal, goalPosition[0]);
+            getEndJunc(info[3], roadMap).neighbors.put(goal, goalPosition[1]);
             
             // A* algorithm for path search
             found.add(init1);
@@ -85,8 +87,10 @@ public class Navigator {
                         found.add(j);
                         queue.add(j);
                     } else if (j.cost > newCost) {
+                        queue.remove(j);    // necessary?
                         j.predecessor = temp;
                         j.cost = newCost;
+                        queue.add(j);
                     }
                 }
             }
@@ -105,7 +109,7 @@ public class Navigator {
      * @param the name of a street
      * @return the corresponding end junction of this street
      */
-    private static Junction getEndJunc(String string) {
+    private static Junction getEndJunc(String string, HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -114,7 +118,7 @@ public class Navigator {
      * @param the name of a street
      * @return the corresponding start junction of this street
      */
-    private static Junction getStartJunc(String string) {
+    private static Junction getStartJunc(String string, HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -124,7 +128,8 @@ public class Navigator {
      * @return {x, y}, x and y are the distance from the point to the start and end junction
      * of the street it lies on
      */
-    private static float[] getPosition(String string, String string2) {
+    private static float[] getPosition(String string, String string2, 
+            HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
         return null;
     }
