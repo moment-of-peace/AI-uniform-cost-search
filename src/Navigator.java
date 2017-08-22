@@ -144,6 +144,22 @@ public class Navigator {
     	}else{
     		float x = num/2*2*unit+unit;//get quotient
     	}
+    	float length = (float) roadMap.get(roadName)[2];
+    	float nlots = (float) roadMap.get(roadName)[3];
+    	float unit = length/nlots;
+    	float x;
+    	float y;
+    	int num = Integer.parseInt(Num);
+    	if(num%2==0){
+    		x = (num/2-1)*unit*2+unit;
+    		y = length-x;
+    	}else{
+    		x = num/2*2*unit+unit;//get quotient
+    		y = length-x;
+    	}
+    	float result[];
+    	
+    	
         return null;
     }
 
