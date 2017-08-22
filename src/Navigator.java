@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -87,12 +88,10 @@ public class Navigator {
                         found.add(j);
                         queue.add(j);
                     } else if (j.cost > newCost) {
-<<<<<<< HEAD
+
                         queue.remove(j);    // necessary?
-=======
                         //in case of order change in pq
                         queue.remove(j);
->>>>>>> origin/master
                         j.predecessor = temp;
                         j.cost = newCost;
                         queue.add(j);
@@ -114,18 +113,20 @@ public class Navigator {
      * @param the name of a street
      * @return the corresponding end junction of this street
      */
-    private static Junction getEndJunc(String string, HashMap<String, Object[]> roadMap) {
+    private static Junction getEndJunc(String roadName, HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
-        return null;
+    	Junction endJunc = (Junction) roadMap.get(roadName)[1];
+        return endJunc;
     }
 
     /**
      * @param the name of a street
      * @return the corresponding start junction of this street
      */
-    private static Junction getStartJunc(String string, HashMap<String, Object[]> roadMap) {
+    private static Junction getStartJunc(String roadName, HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
-        return null;
+    	Junction startJunc = (Junction) roadMap.get(roadName)[0];
+        return startJunc;
     }
 
     /**
@@ -133,9 +134,25 @@ public class Navigator {
      * @return {x, y}, x and y are the distance from the point to the start and end junction
      * of the street it lies on
      */
-    private static float[] getPosition(String string, String string2, 
+    private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
+    	float length = (float) roadMap.get(roadName)[2];
+    	float nlots = (float) roadMap.get(roadName)[3];
+    	float unit = length/nlots;
+    	float x;
+    	float y;
+    	int num = Integer.parseInt(Num);
+    	if(num%2==0){
+    		x = (num/2-1)*unit*2+unit;
+    		y = length-x;
+    	}else{
+    		x = num/2*2*unit+unit;//get quotient
+    		y = length-x;
+    	}
+    	float result[];
+    	
+    	
         return null;
     }
 
