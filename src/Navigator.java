@@ -31,12 +31,10 @@ public class Navigator {
         
         while((nextLine = br.readLine()) != null) {
             String[] info = extracEnv(nextLine);   // info: {start, end, roadname, distance, ...}
-            Junction start;
-            Junction end;
             
             // retrieve or create junctions based on their names
-            start = retrieveJunc(juncMap, info[0]);
-            end = retrieveJunc(juncMap, info[1]);
+            Junction start = retrieveJunc(juncMap, info[0]);
+            Junction end = retrieveJunc(juncMap, info[1]);
             
             // set neighborhood relations
             float dist = Float.parseFloat(info[3]);
@@ -45,6 +43,9 @@ public class Navigator {
             
             roadSet.put(info[0]+info[1], info[2]);
             roadSet.put(info[1]+info[0], info[2]);
+            
+            // store the road and its details
+            roadMap.put(info[2], new Object[]{start, end, dist, info[4]});
         }
         br.close();
         
@@ -88,8 +89,6 @@ public class Navigator {
                         found.add(j);
                         queue.add(j);
                     } else if (j.cost > newCost) {
-
-                        queue.remove(j);    // necessary?
                         //in case of order change in pq
                         queue.remove(j);
                         j.predecessor = temp;
@@ -169,13 +168,27 @@ public class Navigator {
         }
     }
 
+    /**
+     * extract details from a line in environment file
+     * @param a line of String
+     * @return a String array£º{start, end, name, length, nlots}
+     */
     private static String[] extracEnv(String nextLine) {
-        // TODO Auto-generated method stub
-        return null;
+        String[] temp = nextLine.split(";");
+        String[] info = new String[5];
+        for (int i = 0; i < 5; i++) {
+            info[i] = temp[i].trim();
+        }
+        return info;
     }
     
+    /**
+     * extract details from a line in query file
+     * @param a line of String
+     * @return a String array: {number 1, name 1, number 2, name 2}
+     */
     private static String[] extracQue(String nextLine) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 }
