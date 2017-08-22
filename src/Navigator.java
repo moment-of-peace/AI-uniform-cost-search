@@ -137,13 +137,6 @@ public class Navigator {
     private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
         // TODO Auto-generated method stub
-    	float unit = (float) roadMap.get(roadName)[2];
-    	int num = Integer.parseInt(Num);
-    	if(num%2==0){
-    		float x= (num/2-1)*unit*2+unit;
-    	}else{
-    		float x = num/2*2*unit+unit;//get quotient
-    	}
     	float length = (float) roadMap.get(roadName)[2];
     	float nlots = (float) roadMap.get(roadName)[3];
     	float unit = length/nlots;
