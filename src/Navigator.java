@@ -150,10 +150,8 @@ public class Navigator {
     		x = num/2*2*unit+unit;//get quotient
     		y = length-x;
     	}
-    	float result[];
-    	
-    	
-        return null;
+    	float result[]= new float[]{x,y};
+    	return result;
     }
 
     /**
