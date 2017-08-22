@@ -12,7 +12,7 @@ public class Navigator {
     public static void main(String[] args) throws IOException {
         // have not implemented comparator
         
-        // get arguements
+        // get arguments
         String envFile = args[0];
         String queFile = args[1];
         String outFile = args[2];
@@ -194,7 +194,29 @@ public class Navigator {
      * @return a String array: {number 1, name 1, number 2, name 2}
      */
     private static String[] extracQue(String nextLine) {
+        String regex = "([0-9]{1,})([a-zA-z]{1,}[a-zA-z0-9]{0,})";
+        String[] temp = nextLine.split(";");
         
-        return null;
+        String[] info1 = parseRegex(temp[0].trim(), regex);
+        String[] info2 = parseRegex(temp[1].trim(), regex);
+        return new String[]{info1[0], info1[1], info2[0], info2[1]};
+    }
+
+    /**
+     * parse regular expression to extract information from query file
+     * @param raw string
+     * @param regular expression
+     * @return
+     */
+    private static String[] parseRegex(String string, String regex) {
+        Matcher matcher = Pattern.compile(regex).matcher(string);
+        String firstPart = "";
+        String secondPart = "";
+        
+        if (matcher.find()) {
+            firstPart = matcher.group(1);
+            secondPart = matcher.group(2);
+        }
+        return new String[]{firstPart, secondPart};
     }
 }
