@@ -12,7 +12,7 @@ public class Navigator {
     public static void main(String[] args) throws IOException {
         // have not implemented comparator
         
-        // TODO Auto-generated method stub
+        // get arguements
         String envFile = args[0];
         String queFile = args[1];
         String outFile = args[2];
@@ -30,7 +30,7 @@ public class Navigator {
         br = new BufferedReader(new InputStreamReader(new FileInputStream(envFile)));
         
         while((nextLine = br.readLine()) != null) {
-            String[] info = extracEnv(nextLine);   // info: {start, end, roadname, distance, ...}
+            String[] info = extracEnv(nextLine);   // info: {start, end, roadname, distance, nlots}
             
             // retrieve or create junctions based on their names
             Junction start = retrieveJunc(juncMap, info[0]);
@@ -113,7 +113,7 @@ public class Navigator {
      * @return the corresponding end junction of this street
      */
     private static Junction getEndJunc(String roadName, HashMap<String, Object[]> roadMap) {
-        // TODO Auto-generated method stub
+        // Retrive the end junction of a given road
     	Junction endJunc = (Junction) roadMap.get(roadName)[1];
         return endJunc;
     }
@@ -123,7 +123,7 @@ public class Navigator {
      * @return the corresponding start junction of this street
      */
     private static Junction getStartJunc(String roadName, HashMap<String, Object[]> roadMap) {
-        // TODO Auto-generated method stub
+        // Retrive the start junction of a given road
     	Junction startJunc = (Junction) roadMap.get(roadName)[0];
         return startJunc;
     }
@@ -135,11 +135,17 @@ public class Navigator {
      */
     private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
-        // TODO Auto-generated method stub
+        // get the road details
     	float length = (float) roadMap.get(roadName)[2];
-    	float nlots = (float) roadMap.get(roadName)[3];
-    	float unit = length/nlots;
-    	float x;
+        float nlots = Float.parseFloat((String) roadMap.get(roadName)[3]);
+        float unit = length/nlots;
+        
+        int num = Integer.parseInt(Num);
+        int steps = (num + 1) / 2;
+        float x = (float) ((steps + 0.5) * unit);
+        float y = length - x;
+        return new float[]{x, y};
+    	/*float x;
     	float y;
     	int num = Integer.parseInt(Num);
     	if(num%2==0){
@@ -150,7 +156,7 @@ public class Navigator {
     		y = length-x;
     	}
     	float result[]= new float[]{x,y};
-    	return result;
+    	return result;*/
     }
 
     /**
