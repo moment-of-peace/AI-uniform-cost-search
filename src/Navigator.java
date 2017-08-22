@@ -6,13 +6,15 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
         // have not implemented comparator
         
-        // TODO Auto-generated method stub
+        // get arguments
         String envFile = args[0];
         String queFile = args[1];
         String outFile = args[2];
@@ -30,13 +32,11 @@ public class Navigator {
         br = new BufferedReader(new InputStreamReader(new FileInputStream(envFile)));
         
         while((nextLine = br.readLine()) != null) {
-            String[] info = extracEnv(nextLine);   // info: {start, end, roadname, distance, ...}
-            Junction start;
-            Junction end;
+            String[] info = extracEnv(nextLine);   // info: {start, end, roadname, distance, nlots}
             
             // retrieve or create junctions based on their names
-            start = retrieveJunc(juncMap, info[0]);
-            end = retrieveJunc(juncMap, info[1]);
+            Junction start = retrieveJunc(juncMap, info[0]);
+            Junction end = retrieveJunc(juncMap, info[1]);
             
             // set neighborhood relations
             float dist = Float.parseFloat(info[3]);
@@ -45,6 +45,9 @@ public class Navigator {
             
             roadSet.put(info[0]+info[1], info[2]);
             roadSet.put(info[1]+info[0], info[2]);
+            
+            // store the road and its details
+            roadMap.put(info[2], new Object[]{start, end, dist, info[4]});
         }
         br.close();
         
@@ -88,8 +91,6 @@ public class Navigator {
                         found.add(j);
                         queue.add(j);
                     } else if (j.cost > newCost) {
-
-                        queue.remove(j);    // necessary?
                         //in case of order change in pq
                         queue.remove(j);
                         j.predecessor = temp;
@@ -114,7 +115,7 @@ public class Navigator {
      * @return the corresponding end junction of this street
      */
     private static Junction getEndJunc(String roadName, HashMap<String, Object[]> roadMap) {
-        // TODO Auto-generated method stub
+        // Retrive the end junction of a given road
     	Junction endJunc = (Junction) roadMap.get(roadName)[1];
         return endJunc;
     }
@@ -124,7 +125,7 @@ public class Navigator {
      * @return the corresponding start junction of this street
      */
     private static Junction getStartJunc(String roadName, HashMap<String, Object[]> roadMap) {
-        // TODO Auto-generated method stub
+        // Retrive the start junction of a given road
     	Junction startJunc = (Junction) roadMap.get(roadName)[0];
         return startJunc;
     }
@@ -136,11 +137,17 @@ public class Navigator {
      */
     private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
-        // TODO Auto-generated method stub
+        // get the road details
     	float length = (float) roadMap.get(roadName)[2];
-    	float nlots = (float) roadMap.get(roadName)[3];
-    	float unit = length/nlots;
-    	float x;
+        float nlots = Float.parseFloat((String) roadMap.get(roadName)[3]);
+        float unit = length/nlots;
+        
+        int num = Integer.parseInt(Num);
+        int steps = (num + 1) / 2;
+        float x = (float) ((steps + 0.5) * unit);
+        float y = length - x;
+        return new float[]{x, y};
+    	/*float x;
     	float y;
     	int num = Integer.parseInt(Num);
     	if(num%2==0){
@@ -150,10 +157,8 @@ public class Navigator {
     		x = num/2*2*unit+unit;//get quotient
     		y = length-x;
     	}
-    	float result[];
-    	
-    	
-        return null;
+    	float result[]= new float[]{x,y};
+    	return result;*/
     }
 
     /**
@@ -171,13 +176,49 @@ public class Navigator {
         }
     }
 
+    /**
+     * extract details from a line in environment file
+     * @param a line of String
+     * @return a String array£º{start, end, name, length, nlots}
+     */
     private static String[] extracEnv(String nextLine) {
-        // TODO Auto-generated method stub
-        return null;
+        String[] temp = nextLine.split(";");
+        String[] info = new String[5];
+        for (int i = 0; i < 5; i++) {
+            info[i] = temp[i].trim();
+        }
+        return info;
     }
     
+    /**
+     * extract details from a line in query file
+     * @param a line of String
+     * @return a String array: {number 1, name 1, number 2, name 2}
+     */
     private static String[] extracQue(String nextLine) {
-        // TODO Auto-generated method stub
-        return null;
+        String regex = "([0-9]{1,})([a-zA-z]{1,}[a-zA-z0-9]{0,})";
+        String[] temp = nextLine.split(";");
+        
+        String[] info1 = parseRegex(temp[0].trim(), regex);
+        String[] info2 = parseRegex(temp[1].trim(), regex);
+        return new String[]{info1[0], info1[1], info2[0], info2[1]};
+    }
+
+    /**
+     * parse regular expression to extract information from query file
+     * @param raw string
+     * @param regular expression
+     * @return
+     */
+    private static String[] parseRegex(String string, String regex) {
+        Matcher matcher = Pattern.compile(regex).matcher(string);
+        String firstPart = "";
+        String secondPart = "";
+        
+        if (matcher.find()) {
+            firstPart = matcher.group(1);
+            secondPart = matcher.group(2);
+        }
+        return new String[]{firstPart, secondPart};
     }
 }
