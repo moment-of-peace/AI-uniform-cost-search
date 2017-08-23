@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
-        // get arguments
+        // get arguments 0:Env, 1:Query 2:Output
         String envFile = args[0];
         String queFile = args[1];
         String outFile = args[2];
@@ -78,7 +78,7 @@ public class Navigator {
         String nextLine;
         while((nextLine = br.readLine()) != null) {
             String[] info = extractQue(nextLine); // info:{num1, street1, num2, street2}
-            System.out.println(info[1]);
+            
             float[] startPosition = getPosition(info[1], info[0], roadMap);
             float[] goalPosition = getPosition(info[3], info[2], roadMap);
             
@@ -94,14 +94,12 @@ public class Navigator {
             getEndJunc(info[3], roadMap).neighbors.put(goal, goalPosition[1]);
             
             // A* algorithm for path search
-            System.out.println(goal.getCost());
             boolean solution = searchPath(init, goal);
             
             //write result to output file
             if (solution) {
                 // write answer
                 Float length = goal.cost;
-                System.out.println(length);
                 fw.write(length.toString() + ";");
                 writePath(fw, goal, roadSet, info[1], info[3]);
                 
@@ -128,9 +126,10 @@ public class Navigator {
         };
         PriorityQueue<Junction> queue = new PriorityQueue<Junction>(junctionComparator); // priority queue
         HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
+        //initial the queue, add start point, change cost
+        init.cost=0;
         queue.add(init);
         while (!queue.isEmpty() && !queue.contains(goal)) {
-        	
             Junction temp = queue.poll();
             for (Junction j: temp.neighbors.keySet()) {
                 float newCost = temp.cost + temp.neighbors.get(j);
@@ -211,7 +210,6 @@ public class Navigator {
     private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
         // get the road details
-    	//System.out.println(roadName);
         float length = (float) roadMap.get(roadName)[2];
         float nlots = Float.parseFloat((String) roadMap.get(roadName)[3]);
         float unit = 2 * length/nlots;
