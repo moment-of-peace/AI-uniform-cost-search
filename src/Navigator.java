@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
+    	long startTime=System.currentTimeMillis();
         // get arguments 0:Env, 1:Query 2:Output
         String envFile = args[0];
         String queFile = args[1];
@@ -37,6 +38,8 @@ public class Navigator {
         answerQueries(br2, fw, roadMap, roadSet);
         br2.close();
         fw.close();
+        long endTime=System.currentTimeMillis(); 
+        System.out.println("Process Time: "+(endTime-startTime)+"ms");   
     }
     
     /**
@@ -48,7 +51,7 @@ public class Navigator {
             HashMap<String, String> roadSet, HashMap<String, Object[]> roadMap) 
                     throws NumberFormatException, IOException {
         String nextLine;
-        while((nextLine = br.readLine()) != null) {
+        while((nextLine = br.readLine()) != null && !nextLine.equals("")) {
             String[] info = extractEnv(nextLine);   // info: {start, end, roadname, distance, nlots}
             										// info: {roadname, start, end, distance, nlots}
             
@@ -76,9 +79,8 @@ public class Navigator {
     private static void answerQueries(BufferedReader br, FileWriter fw, HashMap<String, Object[]> roadMap, 
             HashMap<String, String> roadSet) throws IOException {
         String nextLine;
-        while((nextLine = br.readLine()) != null) {
+        while((nextLine = br.readLine()) != null && !nextLine.equals("")) {
             String[] info = extractQue(nextLine); // info:{num1, street1, num2, street2}
-            
             float[] startPosition = getPosition(info[1], info[0], roadMap);
             float[] goalPosition = getPosition(info[3], info[2], roadMap);
             
@@ -129,10 +131,11 @@ public class Navigator {
         //initial the queue, add start point, change cost
         init.cost=0;
         queue.add(init);
-        while (!queue.isEmpty() && !queue.contains(goal)) {
+        while (!queue.isEmpty() && !queue.peek().equals(goal)) {
             Junction temp = queue.poll();
             for (Junction j: temp.neighbors.keySet()) {
                 float newCost = temp.cost + temp.neighbors.get(j);
+                
                 if (!found.contains(j)) {
                     j.predecessor = temp;
                     j.cost = newCost;
@@ -257,14 +260,12 @@ public class Navigator {
      * @return a String array: {number 1, name 1, number 2, name 2}
      */
     private static String[] extractQue(String nextLine) {
-        //String regex = "([0-9]{1,})([a-zA-z]{1,}[a-zA-z0-9]{0,})";
-    	String regex = "(?<=\\d)(?=\\D)";
+        String regex = "([0-9]{1,})([^0-9]{1,}[^\\f\\n\\r\\t\\v]{0,})";
+    	
         String[] temp = nextLine.split(";");
         
-        //String[] info1 = parseRegex(temp[0].trim(), regex);
-        // String[] info2 = parseRegex(temp[1].trim(), regex);
-        String[] info1 = temp[0].trim().split(regex);
-        String[] info2 = temp[1].trim().split(regex);
+        String[] info1 = parseRegex(temp[0].trim(), regex);
+        String[] info2 = parseRegex(temp[1].trim(), regex);
         return new String[]{info2[0], info2[1], info1[0], info1[1]};
     }
 
