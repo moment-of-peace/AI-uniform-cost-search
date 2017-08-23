@@ -166,14 +166,15 @@ public class Navigator {
             String startRoad, String endRoad) throws IOException {
         fw.write(endRoad);
         Junction temp = goal.predecessor;
-        while (temp.predecessor != null) {
-            String str = temp.name;
-            fw.write("-" + str);
+        String road = roadSet.get(temp.name + "+" + temp.predecessor.name);
+        fw.write("-" + temp.name);
+        while (road != null) {
+            fw.write("-" + road);
             temp = temp.predecessor;
-            str = str + "+" + temp.name;
-            fw.write("-" + roadSet.get(str));
+            fw.write("-" + temp.name);
+            road = roadSet.get(temp.name + "+" + temp.predecessor.name);
         }
-        fw.write("-" + temp.name + "-" + startRoad + "\r\n");
+        fw.write("-" + startRoad + "\r\n");
     }
 
     /**
