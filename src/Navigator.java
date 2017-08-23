@@ -3,16 +3,27 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
-        // have not implemented comparator
+        // comparator to order junction in the Priority Queue
+    	Comparator<Junction> junctionComparator = new Comparator<Junction>(){
+        	@Override
+        	public int compare(Junction junction1, Junction junction2){
+        		if (junction1.getCost()> junction2.getCost()){return 1;}
+        		if (junction1.getCost()< junction2.getCost()){return -1;}    		
+        		return 0;
+        	}		
+        };
         
         // get arguments
         String envFile = args[0];
@@ -58,7 +69,7 @@ public class Navigator {
             float[] startPosition = getPosition(info[0], info[1], roadMap);
             float[] goalPosition = getPosition(info[2], info[3], roadMap);
             
-            PriorityQueue<Junction> queue = new PriorityQueue<Junction>(); // priority queue
+            PriorityQueue<Junction> queue = new PriorityQueue<Junction>(junctionComparator); // priority queue
             HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
             
             // put start and end junctions of the street which initial point lies on
@@ -109,7 +120,7 @@ public class Navigator {
         }
         br.close();
     }
-
+    
     /**
      * @param the name of a street
      * @return the corresponding end junction of this street
@@ -159,6 +170,7 @@ public class Navigator {
     	}
     	float result[]= new float[]{x,y};
     	return result;*/
+
     }
 
     /**
@@ -222,3 +234,4 @@ public class Navigator {
         return new String[]{firstPart, secondPart};
     }
 }
+

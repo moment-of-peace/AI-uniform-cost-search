@@ -12,4 +12,7 @@ public class Junction {
         this.cost = Float.POSITIVE_INFINITY;
     }
     
+    public float getCost(){
+    	return this.cost;
+    }
 }
