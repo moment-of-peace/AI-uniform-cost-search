@@ -1,6 +1,6 @@
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Comparator;
@@ -10,19 +10,17 @@ import java.util.PriorityQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
         // comparator to order junction in the Priority Queue
-    	Comparator<Junction> junctionComparator = new Comparator<Junction>(){
-        	@Override
-        	public int compare(Junction junction1, Junction junction2){
-        		if (junction1.getCost()> junction2.getCost()){return 1;}
-        		if (junction1.getCost()< junction2.getCost()){return -1;}    		
-        		return 0;
-        	}		
+        Comparator<Junction> junctionComparator = new Comparator<Junction>(){
+            @Override
+            public int compare(Junction junction1, Junction junction2){
+                if (junction1.getCost()> junction2.getCost()){return 1;}
+                else if (junction1.getCost()< junction2.getCost()){return -1;} 
+                return 0;
+            }       
         };
         
         // get arguments
@@ -38,12 +36,29 @@ public class Navigator {
         HashMap<String, Object[]> roadMap = new HashMap<String, Object[]>();
         
         // read environment file
-        String nextLine;
-        BufferedReader br = null;
-        br = new BufferedReader(new InputStreamReader(new FileInputStream(envFile)));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(envFile)));
+        readEnvFile(br, juncMap, roadSet, roadMap);
+        br.close();
         
+        // read query file and answer each query
+        BufferedReader br2 = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
+        FileWriter fw = new FileWriter(outFile);
+        answerQueries(br2, fw, roadMap, roadSet, junctionComparator);
+        br2.close();
+        fw.close();
+    }
+    
+    /**
+     * read the environment file, store all junctions, roads, and build the graph
+     * @throws NumberFormatException
+     * @throws IOException
+     */
+    private static void readEnvFile(BufferedReader br, HashMap<String, Junction> juncMap, 
+            HashMap<String, String> roadSet, HashMap<String, Object[]> roadMap) 
+                    throws NumberFormatException, IOException {
+        String nextLine;
         while((nextLine = br.readLine()) != null) {
-            String[] info = extracEnv(nextLine);   // info: {start, end, roadname, distance, nlots}
+            String[] info = extractEnv(nextLine);   // info: {start, end, roadname, distance, nlots}
             
             // retrieve or create junctions based on their names
             Junction start = retrieveJunc(juncMap, info[0]);
@@ -54,34 +69,30 @@ public class Navigator {
             start.neighbors.put(end, dist);
             end.neighbors.put(start, dist);
             
-            roadSet.put(info[0]+info[1], info[2]);
-            roadSet.put(info[1]+info[0], info[2]);
+            roadSet.put(info[0]+"+"+info[1], info[2]);
+            roadSet.put(info[1]+"+"+info[0], info[2]);
             
             // store the road and its details
             roadMap.put(info[2], new Object[]{start, end, dist, info[4]});
         }
-        br.close();
-        
-        // read query file
-        br = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
+    }
+    
+    /**
+     * read each query and write answers to a file
+     * @throws IOException
+     */
+    private static void answerQueries(BufferedReader br, FileWriter fw, HashMap<String, Object[]> roadMap, 
+            HashMap<String, String> roadSet, Comparator comparator) throws IOException {
+        String nextLine;
         while((nextLine = br.readLine()) != null) {
-            String[] info = extracQue(nextLine); // info:{num1, street1, num2, street2}
+            String[] info = extractQue(nextLine); // info:{num1, street1, num2, street2}
             float[] startPosition = getPosition(info[0], info[1], roadMap);
             float[] goalPosition = getPosition(info[2], info[3], roadMap);
             
-            PriorityQueue<Junction> queue = new PriorityQueue<Junction>(junctionComparator); // priority queue
-            HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
-            
-            // put start and end junctions of the street which initial point lies on
-            // into priority queue, and set their cost
-            Junction init1 = getStartJunc(info[1], roadMap);
-            Junction init2 = getEndJunc(info[1], roadMap);
-            
-            init1.cost = startPosition[0];
-            init2.cost = startPosition[1];
-            
-            queue.add(init1);
-            queue.add(init2);
+            // set the init point
+            Junction init = new Junction("init");
+            init.neighbors.put(getStartJunc(info[1], roadMap), startPosition[0]);
+            init.neighbors.put(getEndJunc(info[1], roadMap), startPosition[1]);
             
             // set the connection relationship between goal point and the junctions of
             // the street it lies on
@@ -90,44 +101,89 @@ public class Navigator {
             getEndJunc(info[3], roadMap).neighbors.put(goal, goalPosition[1]);
             
             // A* algorithm for path search
-            found.add(init1);
-            found.add(init2);
-            while (!queue.isEmpty() && !queue.contains(goal)) {
-                Junction temp = queue.poll();
-                for (Junction j: temp.neighbors.keySet()) {
-                    float newCost = temp.cost + temp.neighbors.get(j);
-                    if (!found.contains(j)) {
-                        j.predecessor = temp;
-                        j.cost = newCost;
-                        found.add(j);
-                        queue.add(j);
-                    } else if (j.cost > newCost) {
-                        //in case of order change in pq
-                        queue.remove(j);
-                        j.predecessor = temp;
-                        j.cost = newCost;
+            boolean solution = searchPath(init, goal, comparator);
+            
+            //write result to output file
+            if (solution) {
+                // write answer
+                Float length = goal.cost;
+                fw.write(length.toString() + ";");
+                writePath(fw, goal, roadSet, info[1], info[3]);
+                
+            } else {
+                // in this case, no solution
+                fw.write("no-path\r\n");
+            }
+        }
+    }
+    
+    /**
+     * the algorithm used to search a path between initial point and goal point, it is based on A* algorithm
+     * @return: true, if the path is found, otherwise false 
+     */
+    private static boolean searchPath(Junction init, Junction goal, Comparator comparator) {
+        PriorityQueue<Junction> queue = new PriorityQueue<Junction>(comparator); // priority queue
+        HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
+        
+        while (!queue.isEmpty() && !queue.contains(goal)) {
+            Junction temp = queue.poll();
+            for (Junction j: temp.neighbors.keySet()) {
+                float newCost = temp.cost + temp.neighbors.get(j);
+                if (!found.contains(j)) {
+                    j.predecessor = temp;
+                    j.cost = newCost;
+                    found.add(j);
+                    queue.add(j);
+                } else if (j.cost > newCost) {
+                    // set new predecessor and cost
+                    j.predecessor = temp;
+                    j.cost = newCost;
+                    if (queue.remove(j)) {
+                        // if it is contained in the queue, update it
                         queue.add(j);
                     }
                 }
             }
-            
-            //write result to output file
-            if (queue.isEmpty()) {
-                // in this case, no solution
-            } else {
-                // write answer
-            }
         }
-        br.close();
+        // return whether the path is found
+        if (queue.isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
+    /**
+     * write path to a file
+     * @require startRoad and endRoad are different
+     * @param startRoad 
+     * @param endRoad 
+     * @param fw: FileWriter object
+     * @param goal: the goal of the path
+     * @param roadSet: a HashMap: Junctions names -> road name.
+     * @throws IOException 
+     */
+    private static void writePath(FileWriter fw, Junction goal, HashMap<String, String> roadSet, 
+            String startRoad, String endRoad) throws IOException {
+        fw.write(endRoad);
+        Junction temp = goal.predecessor;
+        while (temp.predecessor != null) {
+            String str = temp.name;
+            fw.write("-" + str);
+            temp = temp.predecessor;
+            str = str + "+" + temp.name;
+            fw.write("-" + roadSet.get(str));
+        }
+        fw.write("-" + temp.name + "-" + startRoad + "\r\n");
+    }
+
     /**
      * @param the name of a street
      * @return the corresponding end junction of this street
      */
     private static Junction getEndJunc(String roadName, HashMap<String, Object[]> roadMap) {
         // Retrive the end junction of a given road
-    	Junction endJunc = (Junction) roadMap.get(roadName)[1];
+        Junction endJunc = (Junction) roadMap.get(roadName)[1];
         return endJunc;
     }
 
@@ -137,7 +193,7 @@ public class Navigator {
      */
     private static Junction getStartJunc(String roadName, HashMap<String, Object[]> roadMap) {
         // Retrive the start junction of a given road
-    	Junction startJunc = (Junction) roadMap.get(roadName)[0];
+        Junction startJunc = (Junction) roadMap.get(roadName)[0];
         return startJunc;
     }
 
@@ -149,28 +205,27 @@ public class Navigator {
     private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
         // get the road details
-    	float length = (float) roadMap.get(roadName)[2];
+        float length = (float) roadMap.get(roadName)[2];
         float nlots = Float.parseFloat((String) roadMap.get(roadName)[3]);
-        float unit = length/nlots;
+        float unit = 2 * length/nlots;
         
         int num = Integer.parseInt(Num);
-        int steps = (num + 1) / 2;
+        int steps = (num - 1) / 2;
         float x = (float) ((steps + 0.5) * unit);
         float y = length - x;
         return new float[]{x, y};
-    	/*float x;
-    	float y;
-    	int num = Integer.parseInt(Num);
-    	if(num%2==0){
-    		x = (num/2-1)*unit*2+unit;
-    		y = length-x;
-    	}else{
-    		x = num/2*2*unit+unit;//get quotient
-    		y = length-x;
-    	}
-    	float result[]= new float[]{x,y};
-    	return result;*/
-
+        /*float x;
+        float y;
+        int num = Integer.parseInt(Num);
+        if(num%2==0){
+            x = (num/2-1)*unit*2+unit;
+            y = length-x;
+        }else{
+            x = num/2*2*unit+unit;//get quotient
+            y = length-x;
+        }
+        float result[]= new float[]{x,y};
+        return result;*/
     }
 
     /**
@@ -193,7 +248,7 @@ public class Navigator {
      * @param a line of String
      * @return a String array£º{start, end, name, length, nlots}
      */
-    private static String[] extracEnv(String nextLine) {
+    private static String[] extractEnv(String nextLine) {
         String[] temp = nextLine.split(";");
         String[] info = new String[5];
         for (int i = 0; i < 5; i++) {
@@ -207,7 +262,7 @@ public class Navigator {
      * @param a line of String
      * @return a String array: {number 1, name 1, number 2, name 2}
      */
-    private static String[] extracQue(String nextLine) {
+    private static String[] extractQue(String nextLine) {
         String regex = "([0-9]{1,})([a-zA-z]{1,}[a-zA-z0-9]{0,})";
         String[] temp = nextLine.split(";");
         
@@ -234,4 +289,3 @@ public class Navigator {
         return new String[]{firstPart, secondPart};
     }
 }
-
