@@ -13,16 +13,6 @@ import java.util.regex.Pattern;
 public class Navigator {
 
     public static void main(String[] args) throws IOException {
-        // comparator to order junction in the Priority Queue
-        Comparator<Junction> junctionComparator = new Comparator<Junction>(){
-            @Override
-            public int compare(Junction junction1, Junction junction2){
-                if (junction1.getCost()> junction2.getCost()){return 1;}
-                else if (junction1.getCost()< junction2.getCost()){return -1;} 
-                return 0;
-            }       
-        };
-        
         // get arguments
         String envFile = args[0];
         String queFile = args[1];
@@ -43,7 +33,7 @@ public class Navigator {
         // read query file and answer each query
         BufferedReader br2 = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
         FileWriter fw = new FileWriter(outFile);
-        answerQueries(br2, fw, roadMap, roadSet, junctionComparator);
+        answerQueries(br2, fw, roadMap, roadSet);
         br2.close();
         fw.close();
     }
@@ -82,7 +72,7 @@ public class Navigator {
      * @throws IOException
      */
     private static void answerQueries(BufferedReader br, FileWriter fw, HashMap<String, Object[]> roadMap, 
-            HashMap<String, String> roadSet, Comparator comparator) throws IOException {
+            HashMap<String, String> roadSet) throws IOException {
         String nextLine;
         while((nextLine = br.readLine()) != null) {
             String[] info = extractQue(nextLine); // info:{num1, street1, num2, street2}
@@ -101,7 +91,7 @@ public class Navigator {
             getEndJunc(info[3], roadMap).neighbors.put(goal, goalPosition[1]);
             
             // A* algorithm for path search
-            boolean solution = searchPath(init, goal, comparator);
+            boolean solution = searchPath(init, goal);
             
             //write result to output file
             if (solution) {
@@ -121,8 +111,17 @@ public class Navigator {
      * the algorithm used to search a path between initial point and goal point, it is based on A* algorithm
      * @return: true, if the path is found, otherwise false 
      */
-    private static boolean searchPath(Junction init, Junction goal, Comparator comparator) {
-        PriorityQueue<Junction> queue = new PriorityQueue<Junction>(comparator); // priority queue
+    private static boolean searchPath(Junction init, Junction goal) {
+        // comparator to order junction in the Priority Queue
+        Comparator<Junction> junctionComparator = new Comparator<Junction>(){
+            @Override
+            public int compare(Junction junction1, Junction junction2){
+                if (junction1.getCost()> junction2.getCost()){return 1;}
+                else if (junction1.getCost()< junction2.getCost()){return -1;} 
+                return 0;
+            }       
+        };
+        PriorityQueue<Junction> queue = new PriorityQueue<Junction>(junctionComparator); // priority queue
         HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
         
         while (!queue.isEmpty() && !queue.contains(goal)) {
@@ -182,7 +181,7 @@ public class Navigator {
      * @return the corresponding end junction of this street
      */
     private static Junction getEndJunc(String roadName, HashMap<String, Object[]> roadMap) {
-        // Retrive the end junction of a given road
+        // Retrieve the end junction of a given road
         Junction endJunc = (Junction) roadMap.get(roadName)[1];
         return endJunc;
     }
@@ -192,7 +191,7 @@ public class Navigator {
      * @return the corresponding start junction of this street
      */
     private static Junction getStartJunc(String roadName, HashMap<String, Object[]> roadMap) {
-        // Retrive the start junction of a given road
+        // Retrieve the start junction of a given road
         Junction startJunc = (Junction) roadMap.get(roadName)[0];
         return startJunc;
     }
@@ -214,18 +213,6 @@ public class Navigator {
         float x = (float) ((steps + 0.5) * unit);
         float y = length - x;
         return new float[]{x, y};
-        /*float x;
-        float y;
-        int num = Integer.parseInt(Num);
-        if(num%2==0){
-            x = (num/2-1)*unit*2+unit;
-            y = length-x;
-        }else{
-            x = num/2*2*unit+unit;//get quotient
-            y = length-x;
-        }
-        float result[]= new float[]{x,y};
-        return result;*/
     }
 
     /**
