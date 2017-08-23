@@ -33,6 +33,7 @@ public class Navigator {
         // read query file and answer each query
         BufferedReader br2 = new BufferedReader(new InputStreamReader(new FileInputStream(queFile)));
         FileWriter fw = new FileWriter(outFile);
+        
         answerQueries(br2, fw, roadMap, roadSet);
         br2.close();
         fw.close();
@@ -49,21 +50,22 @@ public class Navigator {
         String nextLine;
         while((nextLine = br.readLine()) != null) {
             String[] info = extractEnv(nextLine);   // info: {start, end, roadname, distance, nlots}
+            										// info: {roadname, start, end, distance, nlots}
             
             // retrieve or create junctions based on their names
-            Junction start = retrieveJunc(juncMap, info[0]);
-            Junction end = retrieveJunc(juncMap, info[1]);
+            Junction start = retrieveJunc(juncMap, info[1]);
+            Junction end = retrieveJunc(juncMap, info[2]);
             
             // set neighborhood relations
             float dist = Float.parseFloat(info[3]);
             start.neighbors.put(end, dist);
             end.neighbors.put(start, dist);
             
-            roadSet.put(info[0]+"+"+info[1], info[2]);
-            roadSet.put(info[1]+"+"+info[0], info[2]);
+            roadSet.put(info[1]+"+"+info[2], info[0]);
+            roadSet.put(info[2]+"+"+info[1], info[0]);
             
             // store the road and its details
-            roadMap.put(info[2], new Object[]{start, end, dist, info[4]});
+            roadMap.put(info[0], new Object[]{start, end, dist, info[4]});
         }
     }
     
@@ -76,8 +78,9 @@ public class Navigator {
         String nextLine;
         while((nextLine = br.readLine()) != null) {
             String[] info = extractQue(nextLine); // info:{num1, street1, num2, street2}
-            float[] startPosition = getPosition(info[0], info[1], roadMap);
-            float[] goalPosition = getPosition(info[2], info[3], roadMap);
+            System.out.println(info[1]);
+            float[] startPosition = getPosition(info[1], info[0], roadMap);
+            float[] goalPosition = getPosition(info[3], info[2], roadMap);
             
             // set the init point
             Junction init = new Junction("init");
@@ -91,12 +94,14 @@ public class Navigator {
             getEndJunc(info[3], roadMap).neighbors.put(goal, goalPosition[1]);
             
             // A* algorithm for path search
+            System.out.println(goal.getCost());
             boolean solution = searchPath(init, goal);
             
             //write result to output file
             if (solution) {
                 // write answer
                 Float length = goal.cost;
+                System.out.println(length);
                 fw.write(length.toString() + ";");
                 writePath(fw, goal, roadSet, info[1], info[3]);
                 
@@ -123,8 +128,9 @@ public class Navigator {
         };
         PriorityQueue<Junction> queue = new PriorityQueue<Junction>(junctionComparator); // priority queue
         HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
-        
+        queue.add(init);
         while (!queue.isEmpty() && !queue.contains(goal)) {
+        	
             Junction temp = queue.poll();
             for (Junction j: temp.neighbors.keySet()) {
                 float newCost = temp.cost + temp.neighbors.get(j);
@@ -205,6 +211,7 @@ public class Navigator {
     private static float[] getPosition(String roadName, String Num, 
             HashMap<String, Object[]> roadMap) {
         // get the road details
+    	//System.out.println(roadName);
         float length = (float) roadMap.get(roadName)[2];
         float nlots = Float.parseFloat((String) roadMap.get(roadName)[3]);
         float unit = 2 * length/nlots;
@@ -238,6 +245,7 @@ public class Navigator {
      */
     private static String[] extractEnv(String nextLine) {
         String[] temp = nextLine.split(";");
+        
         String[] info = new String[5];
         for (int i = 0; i < 5; i++) {
             info[i] = temp[i].trim();
@@ -251,12 +259,15 @@ public class Navigator {
      * @return a String array: {number 1, name 1, number 2, name 2}
      */
     private static String[] extractQue(String nextLine) {
-        String regex = "([0-9]{1,})([a-zA-z]{1,}[a-zA-z0-9]{0,})";
+        //String regex = "([0-9]{1,})([a-zA-z]{1,}[a-zA-z0-9]{0,})";
+    	String regex = "(?<=\\d)(?=\\D)";
         String[] temp = nextLine.split(";");
         
-        String[] info1 = parseRegex(temp[0].trim(), regex);
-        String[] info2 = parseRegex(temp[1].trim(), regex);
-        return new String[]{info1[0], info1[1], info2[0], info2[1]};
+        //String[] info1 = parseRegex(temp[0].trim(), regex);
+        // String[] info2 = parseRegex(temp[1].trim(), regex);
+        String[] info1 = temp[0].trim().split(regex);
+        String[] info2 = temp[1].trim().split(regex);
+        return new String[]{info2[0], info2[1], info1[0], info1[1]};
     }
 
     /**

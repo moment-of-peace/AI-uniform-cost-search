@@ -1,0 +1,7 @@
+Warren ; J1 ; J4 ; 8 ; 8
+Durham ; J2 ; J5 ; 8 ; 8
+Mitre ; J3 ; J6 ; 8 ; 8
+Carmody1 ; J1 ; J2 ; 4 ; 4
+Carmody2 ; J2 ; J3 ; 4 ; 4
+Schonell1 ; J4 ; J5 ; 4 ; 4
+Schonell2 ; J5 ; J6 ; 4 ; 4
