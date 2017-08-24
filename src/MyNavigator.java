@@ -37,7 +37,7 @@ public class MyNavigator {
             Junction start = retrieveJunc(juncMap, info[1]);
             Junction end = retrieveJunc(juncMap, info[2]);
             
-            Road road = new Road(start, end, dist, nlots);
+            Road road = new Road(info[0], start, end, dist, nlots);
             roadMap.put(info[0], road);
             
             // set neighborhood relations
@@ -62,25 +62,29 @@ public class MyNavigator {
             float[] startPosition = getPosition(info[1], info[0], roadMap);
             float[] goalPosition = getPosition(info[3], info[2], roadMap);
             
-            if (!info[2].equals(info[3])) {
-                // create the initial and goal junctions
-                //Junction init = new Junction("init");
+            if (!info[1].equals(info[3])) {
+                // create the goal junctions
                 Junction goal = new Junction("goal");
-                
+                // retrieve the junctions of the goal road and set relations between them
+                // and the goal point
                 Junction goalRoadStart = roadMap.get(info[3]).start;
                 Junction goalRoadEnd = roadMap.get(info[3]).end;
                 
-                Road goalToStart = new Road(goal, goalRoadStart, goalPosition[0], 0);
-                Road goalToEnd = new Road(goal, goalRoadEnd, goalPosition[1], 0);
+                Road goalToStart = new Road(null, goal, goalRoadStart, goalPosition[0], 0);
+                Road goalToEnd = new Road(null, goal, goalRoadEnd, goalPosition[1], 0);
                 
                 goalRoadStart.neighbor.put(goal, goalToStart);
                 goalRoadEnd.neighbor.put(goal, goalToEnd);
                 
+                // retrieve the junctions of the initial road and set the costs and predecessors
+                // of these junctions
                 Junction initRoadStart = roadMap.get(info[1]).start;
                 Junction initRoadEnd = roadMap.get(info[1]).end;
                 
                 initRoadStart.cost = startPosition[0];
+                initRoadStart.predecessor = null;
                 initRoadEnd.cost = startPosition[1];
+                initRoadEnd.predecessor = null;
                 
                 // A* algorithm for path search
                 boolean solution = searchPath(initRoadStart, initRoadEnd, goal);
@@ -90,7 +94,7 @@ public class MyNavigator {
                     // write answer
                     Float length = goal.cost;
                     fw.write(length.toString() + ";");
-                    //writePath(fw, goal);
+                    writePath(fw, goal, info[1], info[3]);
                     fw.write("\r\n");
                     
                 } else {
@@ -108,6 +112,7 @@ public class MyNavigator {
         }
         br2.close();
         fw.close();
+        System.out.println("finished");
     }
     
     /**
@@ -127,6 +132,7 @@ public class MyNavigator {
         PriorityQueue<Junction> queue = new PriorityQueue<Junction>(junctionComparator); // priority queue
         HashSet<Junction> found = new HashSet<Junction>(); // store all found junctions
         
+        // add the two initial points
         queue.add(init1);
         queue.add(init2);
         found.add(init1);
@@ -159,21 +165,23 @@ public class MyNavigator {
         }
     }
     
-    /*
-    private static void writePath(FileWriter fw, Junction goal, HashMap<String, String> roadSet, 
-            String startRoad, String endRoad) throws IOException {
+    /**
+     * trace back the path from the goal point and write the path to a file
+     * @throws IOException
+     */
+    private static void writePath(FileWriter fw, Junction goal, String startRoad, String endRoad) 
+            throws IOException {
         fw.write(endRoad);
         Junction temp = goal.predecessor;
-        String road = roadSet.get(temp.name + "+" + temp.predecessor.name);
         fw.write("-" + temp.name);
-        while (road != null) {
-            fw.write("-" + road);
+        
+        while (temp.predecessor != null) {
+            fw.write("-" + temp.neighbor.get(temp.predecessor).name);
             temp = temp.predecessor;
             fw.write("-" + temp.name);
-            road = roadSet.get(temp.name + "+" + temp.predecessor.name);
         }
-        fw.write("-" + startRoad + "\r\n");
-    }*/
+        fw.write("-" + startRoad);
+    }
 
     /**
      * calculate position of a point based on street name and number
