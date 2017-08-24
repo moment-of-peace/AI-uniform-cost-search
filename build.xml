@@ -1,79 +1,33 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="AI-Assign1">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../../usr/local/eclipse/"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.8"/>
-    <property name="source" value="1.8"/>
-    <path id="AI-Assign1.classpath">
-        <pathelement location="bin"/>
-    </path>
+<!--A generic ant build file-->
+<project default="jar">
+
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="classes" location="${build}/classes"/>
+    <property name="jars" location="${build}/jars"/>
+    <property name="jarname" value="a1-comp7702-NullPointerException.jar"/>
+    <property name="mainclass" value="assignment.MyNavigator"/>
+
     <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${jars}"/>
     </target>
+
+    <target name="compile" depends="init">
+        <javac includeantruntime="false" srcdir="${src}" destdir="${classes}"/>
+    </target>
+
+    <target name="jar" depends ="compile">
+        <jar jarfile="${jars}/${jarname}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="${mainclass}"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="clean">
-        <delete dir="bin"/>
+        <delete dir="${build}"/>
     </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="AI-Assign1.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="Navigator1ms">
-        <java classname="MyNavigator" failonerror="true" fork="yes">
-            <arg line="s1M-data.txt s1M-query.txt outs1m.txt"/>
-            <classpath refid="AI-Assign1.classpath"/>
-        </java>
-    </target>
-    <target name="Navigator1m">
-        <java classname="Navigator" failonerror="true" fork="yes">
-            <arg line="n1M-data.txt n1M-query.txt outn1m.txt"/>
-            <classpath refid="AI-Assign1.classpath"/>
-        </java>
-    </target>
-    <target name="Assign1Test">
-        <java classname="AssignTest" failonerror="true" fork="yes">
-            <classpath refid="AI-Assign1.classpath"/>
-        </java>
-    </target>
-    <target name="Navigator1k">
-        <java classname="Navigator" failonerror="true" fork="yes">
-            <arg line="n1000.txt n1000q.txt outn1000.txt"/>
-            <classpath refid="AI-Assign1.classpath"/>
-        </java>
-    </target>
-    <target name="Navigator1mx">
-        <java classname="MyNavigator" failonerror="true" fork="yes">
-            <arg line="n1M-data.txt n1M-query.txt outn1m.txt"/>
-            <classpath refid="AI-Assign1.classpath"/>
-        </java>
-    </target>
+
 </project>
