@@ -238,7 +238,7 @@ public class MyNavigator {
     /**
      * extract details from a line in environment file
      * @param a line of String
-     * @return a String array£º{start, end, name, length, nlots}
+     * @return a String array: {start, end, name, length, nlots}
      */
     private static String[] extractEnv(String nextLine) {
         String[] temp = nextLine.split(";");

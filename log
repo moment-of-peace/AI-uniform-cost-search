@@ -1,0 +1,228 @@
+commit 1d98295de50998a4503f28fdbf7f28f7ccfb50fe
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Fri Aug 25 12:38:58 2017 +1000
+
+    repair bugs in case of same roads
+
+commit 1ea674e3c4658fc01a7f2ea1969da0182e44e313
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Thu Aug 24 20:14:03 2017 +1000
+
+    modify build.xml
+
+commit 53829b8aee04aa20f2136be4d4d9c2b204c01e83
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Thu Aug 24 19:52:30 2017 +1000
+
+    add package, new build file
+
+commit ddd7e21d0be9335f242cd969dcdc355a38d42188
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Thu Aug 24 16:37:49 2017 +1000
+
+    finished version and build.xml
+
+commit 92709be91b8d49ce9d9c3e11d2a00b5f78f337a0
+Author: Chrosea <475687401@qq.com>
+Date:   Thu Aug 24 16:34:47 2017 +1000
+
+    Create .gitignore
+
+commit edeaa6d19566a6cfe97fdbe2f384b731e480b80e
+Author: Chrosea <475687401@qq.com>
+Date:   Thu Aug 24 11:47:17 2017 +1000
+
+    FullyTest
+
+commit ef3f797113aa718f35971cf0c3fb58f5e1af38f0
+Merge: 137b398 0d286cc
+Author: Chrosea <475687401@qq.com>
+Date:   Thu Aug 24 11:16:24 2017 +1000
+
+    Merge remote-tracking branch 'origin/master'
+
+commit 0d286cc9fc8a8f4f2cf0b2b0bc980cfea8f5dcbb
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Thu Aug 24 10:15:50 2017 +1000
+
+    Class Road
+
+commit 137b398632985f39b1fb44a13bd82d1e64f66d59
+Author: Chrosea <475687401@qq.com>
+Date:   Thu Aug 24 00:12:44 2017 +1000
+
+    Version3.1
+
+commit 772fbd66e3008581543a4a50e72ee0f0188513e5
+Author: Chrosea <475687401@qq.com>
+Date:   Wed Aug 23 22:23:31 2017 +1000
+
+    addInitial_PQ
+
+commit 82c7dbb105d621309e0ad70925173272456bcf49
+Author: Chrosea <475687401@qq.com>
+Date:   Wed Aug 23 21:40:43 2017 +1000
+
+    Test; modified=>envFile_info/extractQueue
+
+commit ef625b1eec0911f8dfd2b93f77207a55a3cc73e3
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Wed Aug 23 20:05:23 2017 +1000
+
+    version3
+
+commit 1721d92e4e0bb295fea0e14443bbf056bd9e93d6
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Wed Aug 23 19:27:20 2017 +1000
+
+    finished version2
+
+commit ebcf3e4df53dd4ae290160aab905f851c75f95f5
+Author: moment-of-peace <yi.liu1183@gmail.com>
+Date:   Wed Aug 23 19:19:38 2017 +1000
+
+    A finished version
+
+commit b07e4265ff423d64a55ac790120a36e86c2ffcf9
+Author: Chrosea <475687401@qq.com>
+Date:   Wed Aug 23 17:34:34 2017 +1000
+
+    addComparator
+
+commit 6227c2a576f70c0f6039a0c984f48871eb06f0c0
+Merge: 681edad ac06bc6
+Author: Chrosea <475687401@qq.com>
+Date:   Wed Aug 23 00:05:22 2017 +1000
+
+    Merge remote-tracking branch 'origin/master'
+
+commit ac06bc66bc62dcb07e67bd764d2c84b780e4f2a8
+Author: Yi Liu (刘奕） <yi.liu1183@gmail.com>
+Date:   Tue Aug 22 22:49:11 2017 +1000
+
+    Update Navigator.java
+
+commit 602a65101d15797a19592e802ef6d7458a1830c6
+Author: Yi Liu (刘奕） <yi.liu1183@gmail.com>
+Date:   Tue Aug 22 22:38:30 2017 +1000
+
+    add regular expression method
+
+commit e9c621fc3404d4ca4537fd243e43a92613016802
+Author: Yi Liu (刘奕） <yi.liu1183@gmail.com>
+Date:   Tue Aug 22 21:16:38 2017 +1000
+
+    modify getPosition
+
+commit cd86e74fdc2ac61cb7c64e4f1c1c26ce77675c3e
+Author: Yi Liu (刘奕） <yi.liu1183@gmail.com>
+Date:   Tue Aug 22 20:48:49 2017 +1000
+
+    updates about roadMap, extractEnv
+
+commit e9673459b77bae3166d82cf9f61dc10d712442c8
+Author: Chrosea <475687401@qq.com>
+Date:   Tue Aug 22 16:52:49 2017 +1000
+
+    getPosition
+
+commit 681edad47683f039c9e0239428736f2601330d12
+Author: Chrosea <475687401@qq.com>
+Date:   Tue Aug 22 16:44:41 2017 +1000
+
+    test local commit
+
+commit caafa24d1d354999ff229aaca0a8dd1214dfd86a
+Merge: 98742bd 72ac6ef
+Author: Chrosea <475687401@qq.com>
+Date:   Tue Aug 22 16:40:20 2017 +1000
+
+    test merge
+
+commit 72ac6ef9868a119db58ecd89da972159dfbec6a1
+Author: Chrosea <475687401@qq.com>
+Date:   Tue Aug 22 16:32:33 2017 +1000
+
+    getJunction
+
+commit cbd8c7347930baa412d700fcca537217899aa475
+Author: Chrosea <475687401@qq.com>
+Date:   Tue Aug 22 16:16:25 2017 +1000
+
+    IntString
+
+commit 98742bd4d8da3cf817cece6e3fedf44df86d0231
+Author: Unknown <475687401@qq.com>
+Date:   Tue Aug 22 16:14:11 2017 +1000
+
+    getJunction&position(v0.9)
+
+commit 6d289f0460eaa14d7a8a87f4f58ff24cf8e3fe92
+Merge: ce9cc69 8de8d1f
+Author: Yi Liu <yi.liu1183@gmail.com>
+Date:   Tue Aug 22 15:00:37 2017 +1000
+
+    Merge remote-tracking branch 'origin/master'
+    
+    # Conflicts:
+    #	src/Navigator.java
+
+commit ce9cc698b95386e4dc7e50a3e0fe19aad2bf2b9f
+Author: Yi Liu <yi.liu1183@gmail.com>
+Date:   Tue Aug 22 15:00:03 2017 +1000
+
+    add map < String, Obj[ ] >
+
+commit 8de8d1f5717e9d0b7eb98ed066f2acc13eff4f75
+Author: Chrosea <475687401@qq.com>
+Date:   Mon Aug 21 18:01:10 2017 +1000
+
+    Update Navigator.java
+
+commit 0c87ab0887539dace124be8c4daa34412c435e3d
+Author: Yi Liu <yi.liu1183@gmail.com>
+Date:   Mon Aug 21 17:58:55 2017 +1000
+
+    possible bug: queue.remove then add?
+
+commit 27d0912a0a0c99ddc537d1f87a7935da5257d3e3
+Author: Yi Liu <yi.liu1183@gmail.com>
+Date:   Mon Aug 21 17:40:58 2017 +1000
+
+    framework finished
+
+commit 83d825a2325eb39aee2880eee055482fe33fc3f0
+Author: Yi Liu <yi.liu1183@gmail.com>
+Date:   Mon Aug 21 17:19:54 2017 +1000
+
+    read query
+
+commit 6e35762fbaab121278a775581df829fc9129ffb7
+Author: Yi Liu <yi.liu1183@gmail.com>
+Date:   Sun Aug 20 09:16:01 2017 +1000
+
+    details of read environment file
+
+commit 85446e6df354702cbab605a5cf8f5bd38c98e959
+Author: Yi Liu (刘奕） <yi.liu1183@gmail.com>
+Date:   Thu Aug 17 17:29:58 2017 +1000
+
+    a framework
+
+commit a30561f83335849933bb9dd2bcfcdda4868e2806
+Author: Yi Liu (刘奕） <yi.liu1183@gmail.com>
+Date:   Thu Aug 17 17:29:25 2017 +1000
+
+    new folder
+
+commit 380e8d36401ac94d665cae8d563809dfb0b65534
+Author: Chrosea <475687401@qq.com>
+Date:   Thu Aug 17 17:28:07 2017 +1000
+
+    Add files via upload
+
+commit f1aa71549c8b0b938c96c5e10e9ffed80411835b
+Author: Chrosea <475687401@qq.com>
+Date:   Thu Aug 17 17:26:06 2017 +1000
+
+    Create README.md
