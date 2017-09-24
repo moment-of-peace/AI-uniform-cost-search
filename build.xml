@@ -5,7 +5,7 @@
     <property name="build" location="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="jars" location="${build}/jars"/>
-    <property name="jarname" value="a1-7702-NullPointerException.jar"/>
+    <property name="jarname" value="a1-comp7702-NullPointerException.jar"/>
     <property name="mainclass" value="assignment.MyNavigator"/>
 
     <target name="init">

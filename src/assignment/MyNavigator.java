@@ -1,7 +1,5 @@
 package assignment;
-/**
- * the main class used to search the shortest path between two junctions
- */
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -125,7 +123,7 @@ public class MyNavigator {
                 // the initial point and goal point are on the same road
                 Float length = startPosition[0] - goalPosition[0];
                 if (length < 0) length = -length;
-                fw.write(length.toString() + ";" + info[1] + "\r\n");
+                fw.write(length.toString() + ";" + info[2]);
             }
             nextLine = br.readLine();
         }
